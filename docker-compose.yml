@@ -1,0 +1,27 @@
+version: '3.2'
+services:
+  mongo:
+    image: mongo:3.0.8 
+    volumes:
+      - /host-path/mongo/logs:/logs
+      - /host-path/mongo/data:/data/db
+    ports:
+      - "27018:27017"
+
+  analytics:
+    image: analytics:latest
+    depends_on:
+      - "mongo"
+    build:
+      context: .
+      dockerfile: './Dockerfile'
+    ports:
+      - "5000:5000"
+    command: "python -u container.py"
+    environment:
+      host: mongo
+      port: 27017
+      username:
+      password:
+      db: feedback
+      collection: feedback
